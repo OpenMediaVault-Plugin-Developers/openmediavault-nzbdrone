@@ -1,0 +1,4 @@
+openmediavault-nzbdrone
+=========================
+
+nzbdrone plugin

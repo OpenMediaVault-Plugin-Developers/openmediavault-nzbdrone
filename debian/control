@@ -1,0 +1,14 @@
+Source: openmediavault-nzbdrone
+Section: misc
+Priority: optional
+Maintainer: OpenMediaVault Plugin Developers <plugins@omv-extras.org>
+Build-Depends: debhelper (>= 9 )
+Standards-Version: 3.9.3
+
+Package: openmediavault-nzbdrone
+Architecture: all
+Depends: ${misc:Depends}, openmediavault (>= 1.0), nzbdrone, libmono-cil-dev (>= 3.10), sqlite3 (>= 3.7), mediainfo (>= 0.7.52)
+Priority: optional
+Homepage: https://nzbdrone.com
+Description: OpenMediaVault NzbDrone(Sonarr) plugin
+ NzbDrone is a an internet PVR

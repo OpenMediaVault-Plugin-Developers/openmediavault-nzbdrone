@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+set -e
+
+. /etc/default/openmediavault
+. /usr/share/openmediavault/scripts/helper-functions
+
+case "$1" in
+    purge)
+        if [ -f "/var/run/nzbdrone/nzbdrone.pid" ]; then
+            PID=`cat /var/run/nzbdrone/nzbdrone.pid`
+            if kill -0 $PID > /dev/null 2>&1; then
+                kill -9 $PID
+                rm -Rf /var/run/nzbdrone/nzbdrone.pid
+            fi
+        fi
+
+        if [ -d "/var/run/nzbdrone" ]; then
+            rm -Rf /var/run/nzbdrone
+        fi
+        omv_config_delete "//services/nzbdrone"
+
+        userdel -r nzbdrone
+
+    ;;
+
+        remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+    ;;
+
+    *)
+        echo "postrm called with unknown argument '$1'" >&2
+        exit 1
+    ;;
+esac
+
+exit 0

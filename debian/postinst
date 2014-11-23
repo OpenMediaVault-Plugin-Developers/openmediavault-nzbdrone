@@ -1,0 +1,48 @@
+#!/bin/sh
+
+set -e
+
+. /etc/default/openmediavault
+. /usr/share/openmediavault/scripts/helper-functions
+
+case "$1" in
+    configure)
+        if ! getent passwd nzbdrone >/dev/null 2>&1; then
+            echo "Adding nzbdrone user..."
+            useradd --create-home --groups users --no-user-group --shell /usr/sbin/nologin nzbdrone
+            insserv -d nzbdrone
+        else
+            echo "nzbdrone user already exists."
+        fi
+
+        if [ -f "/var/run/nzbdrone/nzbdrone.pid" ]; then
+            echo "Cleaning old pid file..."
+            rm -Rf /var/run/nzbdrone/nzbdrone.pid
+        fi
+
+        if ! omv_config_exists "/config/services/nzbdrone"; then
+            echo "Initial configuration."
+            object="<enable>0</enable>"
+            object="${object}<showtab>0</showtab>"
+            object="${object}<port>8989</port>"
+            omv_config_add_element "/config/services" "nzbdrone" "${object}" true
+        fi
+        
+        omv_install_fixperms
+
+        # Activate package triggers. These triggers are only set during the
+        # package installation.
+        dpkg-trigger update-fixperms
+        dpkg-trigger update-locale
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument" >&2
+        exit 1
+    ;;
+esac
+
+exit 0
